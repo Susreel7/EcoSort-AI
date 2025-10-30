@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>EcoSort AI - Smart Waste Management System</title>
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.svg') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Header -->
+    <header class="main-header">
+        <div class="container">
+              <h1><span class="gradient-text">EcoSort</span> AI</h1>
+              <h3>Revolutionizing Waste Management with Artificial Intelligence</h3>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <!-- Navigation Tabs -->
+            <nav class="tab-navigation">
+                <button class="tab-btn active" data-tab="upload">
+                    <i class="fas fa-upload"></i> Upload Image
+                </button>
+                <button class="tab-btn" data-tab="camera">
+                    <i class="fas fa-camera"></i> Camera Capture
+                </button>
+                <button class="tab-btn" data-tab="live">
+                    <i class="fas fa-video"></i> Live Localization
+                </button>
+                <button class="tab-btn" data-tab="batch">
+                    <i class="fas fa-layer-group"></i> Batch Processing
+                </button>
+            </nav>
+
+            <!-- Upload Tab -->
+            <div id="upload-tab" class="tab-content active">
+                <div class="upload-section">
+                    <h2><i class="fas fa-upload"></i> Upload Image for Classification</h2>
+                    <p>Choose a waste image from your device to classify it instantly.</p>
+                    
+                    <div class="upload-area">
+                        <div class="upload-box" id="uploadBox">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <h3>Drag & Drop Image Here</h3>
+                            <p>or click to browse files</p>
+                            <input type="file" id="imageInput" accept="image/*" hidden>
+                        </div>
+                    </div>
+
+                    <div class="result-section" id="uploadResult" style="display: none;">
+                        <div class="result-card">
+                            <div class="result-header">
+                                <span class="result-emoji" id="resultEmoji"></span>
+                                <h2 class="result-class" id="resultClass"></h2>
+                            </div>
+                            <div class="confidence-bar">
+                                <span id="confidenceText"></span>
+                            </div>
+                            <div id="uploadTips" class="tips-container" style="display: none;">
+                                <h3>♻️ Waste Disposal Tips</h3>
+                                <ul></ul>
+                            </div>
+                            <div class="category-badge" id="categoryBadge"></div>
+                            
+                            <div class="probability-section">
+                                <h3>All Class Probabilities</h3>
+                                <div id="probabilityList"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Camera Tab -->
+            <div id="camera-tab" class="tab-content">
+                <div class="camera-section">
+                    <h2><i class="fas fa-camera"></i> Camera Capture</h2>
+                    <p>Take a photo using your device's camera for instant classification.</p>
+                    
+                    <div class="camera-container">
+                        <video id="video" autoplay></video>
+                        <canvas id="canvas" style="display: none;"></canvas>
+                        <div class="camera-controls">
+                            <button id="captureBtn" class="capture-btn">
+                                <i class="fas fa-camera"></i> Capture Photo
+                            </button>
+                            <button id="startCamera" class="start-btn">
+                                <i class="fas fa-play"></i> Start Camera
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="result-section" id="cameraResult" style="display: none;">
+                        <div class="result-card">
+                            <div class="result-header">
+                                <span class="result-emoji" id="cameraResultEmoji"></span>
+                                <h2 class="result-class" id="cameraResultClass"></h2>
+                            </div>
+                            <div class="confidence-bar">
+                                <span id="cameraConfidenceText"></span>
+                            </div>
+                            <div id="cameraTips" class="tips-container" style="display: none;">
+                                <h3>♻️ Waste Disposal Tips</h3>
+                                <ul></ul>
+                            </div>
+                            <div class="category-badge" id="cameraCategoryBadge"></div>
+                            
+                            <div class="probability-section">
+                                <h3>All Class Probabilities</h3>
+                                <div id="cameraProbabilityList"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Live Localization Tab -->
+            <div id="live-tab" class="tab-content">
+                <div class="camera-section">
+                    <h2><i class="fas fa-video"></i> Live Camera Localization</h2>
+                    <p>Continuously analyze the live camera feed and update predictions in real-time.</p>
+                    
+                    <div class="camera-container">
+                        <video id="liveVideo" autoplay></video>
+                        <canvas id="liveCanvas" style="display: none;"></canvas>
+                        <div class="camera-controls">
+                            <button id="startLiveBtn" class="start-btn">
+                                <i class="fas fa-play"></i> Start Live
+                            </button>
+                            <button id="stopLiveBtn" class="capture-btn" style="display: none;">
+                                <i class="fas fa-stop"></i> Stop Live
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="result-section" id="liveResult" style="display: none;">
+                        <div class="result-card">
+                            <div class="result-header">
+                                <span class="result-emoji" id="liveResultEmoji"></span>
+                                <h2 class="result-class" id="liveResultClass"></h2>
+                            </div>
+                            <div class="confidence-bar">
+                                <span id="liveConfidenceText"></span>
+                            </div>
+                            <div id="liveTips" class="tips-container" style="display: none;">
+                                <h3>♻️ Waste Disposal Tips</h3>
+                                <ul></ul>
+                            </div>
+                            <div class="category-badge" id="liveCategoryBadge"></div>
+                            
+                            <div class="probability-section">
+                                <h3>All Class Probabilities</h3>
+                                <div id="liveProbabilityList"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Batch Tab -->
+            <div id="batch-tab" class="tab-content">
+                <div class="batch-section">
+                    <h2><i class="fas fa-layer-group"></i> Batch Processing</h2>
+                    <p>Upload multiple images to classify them all at once.</p>
+                    
+                    <div class="batch-upload-area">
+                        <div class="upload-box" id="batchUploadBox">
+                            <i class="fas fa-images"></i>
+                            <h3>Drag & Drop Multiple Images</h3>
+                            <p>or click to browse files</p>
+                            <input type="file" id="batchImageInput" accept="image/*" multiple hidden>
+                        </div>
+                    </div>
+
+                    <div class="batch-results" id="batchResults" style="display: none;">
+                        <div class="batch-stats">
+                            <div class="stat-card">
+                                <h3 id="totalImages">0</h3>
+                                <p>Total Images</p>
+                            </div>
+                            <div class="stat-card">
+                                <h3 id="avgConfidence">0%</h3>
+                                <p>Avg Confidence</p>
+                            </div>
+                            <div class="stat-card">
+                                <h3 id="highConfidence">0</h3>
+                                <p>High Confidence</p>
+                            </div>
+                            <div class="stat-card">
+                                <h3 id="successfulCount">0</h3>
+                                <p>Successful</p>
+                            </div>
+                        </div>
+
+                        <div class="individual-results" id="individualResults"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Analytics Tab -->
+            <div id="analytics-tab" class="tab-content">
+                <div class="analytics-section">
+                    <h2><i class="fas fa-chart-pie"></i> Analytics Dashboard</h2>
+                    <p>Visualize your detections and impact over time.</p>
+
+                    <div class="batch-stats" style="margin-top: 0;">
+                        <div class="stat-card">
+                            <h3>Counts by Category</h3>
+                            <canvas id="countsChart" height="220"></canvas>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Confidence Trend</h3>
+                            <canvas id="accuracyChart" height="220"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="upload-area" style="margin-top: 10px;">
+                        <div class="upload-box" style="cursor: default;">
+                            <h3>Geographic Waste Distribution</h3>
+                            <div id="map" style="height: 380px; border-radius: 12px; margin-top: 10px;"></div>
+                        </div>
+                    </div>
+
+                    <div class="batch-stats">
+                        <div class="stat-card">
+                            <h3>Most Common Waste Types</h3>
+                            <div id="leaderboard"></div>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Export</h3>
+                            <p style="margin-bottom:10px;">Download detection logs for reporting</p>
+                            <a class="browse-btn" href="{{ url_for('analytics_export_csv') }}" style="display:inline-flex; align-items:center; gap:8px; text-decoration:none;">
+                                <i class="fas fa-file-csv"></i> Export CSV
+                            </a>
+                            <div style="height:10px;"></div>
+                            <a class="browse-btn" href="{{ url_for('analytics_export_pdf') }}" style="display:inline-flex; align-items:center; gap:8px; text-decoration:none;">
+                                <i class="fas fa-file-pdf"></i> Export PDF
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Sidebar -->
+        <aside class="sidebar">
+        <div class="sidebar-content">
+            <div class="info-section">
+                <h3><i class="fas fa-info-circle"></i> About EcoSort AI</h3>
+                <div class="info-item">
+                    <strong>AI Model:</strong> MobileNetV2 Transfer Learning
+                </div>
+                <div class="info-item">
+                    <strong>Loaded Model:</strong> {{ model_name or 'Loading...' }}
+                </div>
+                <div class="info-item">
+                    <strong>Classes:</strong> 7 waste categories
+                </div>
+                <div class="info-item">
+                    <strong>Architecture:</strong> Deep Neural Network
+                </div>
+                {% if training_stats %}
+                <div class="info-item">
+                    <strong>Validation Accuracy:</strong> {{ "%.2f"|format(max_accuracy) }}%
+                </div>
+                <div class="info-item">
+                    <strong>Training Epochs:</strong> {{ total_epochs }}
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="categories-section">
+                <h3><i class="fas fa-th-list"></i> Waste Categories</h3>
+                {% for class_name, info in class_info.items() %}
+                <div class="category-item">
+                    <span class="category-emoji">{{ info.emoji }}</span>
+                    <span class="category-name">{{ class_name.title() }}</span>
+                </div>
+                {% endfor %}
+            </div>
+
+            <div class="tips-section">
+                <h3><i class="fas fa-lightbulb"></i> Tips</h3>
+                <ul>
+                    <li>Use clear, well-lit photos</li>
+                    <li>One item at a time</li>
+                    <li>Fill the frame with the item</li>
+                    <li>Avoid blurry images</li>
+                </ul>
+            </div>
+
+            <div class="footer-info">
+                <p><strong>Dataset:</strong> <a href="https://github.com/nikhilvenkatkumsetty/TrashBox" target="_blank">TrashBox</a></p>
+            </div>
+        </div>
+        </aside>
+    </main>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay" style="display: none;">
+        <div class="loading-spinner">
+            <i class="fas fa-brain"></i>
+            <p>Analyzing image...</p>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>♻️ <strong>Help protect the environment by disposing waste correctly!</strong> 🌍</p>
+                <div class="accuracy-badge">
+                    <span>🎯 Model Accuracy: 85.16%</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script id="classInfoJson" type="application/json">{{ class_info | tojson | safe }}</script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <script src="{{ url_for('static', filename='analytics.js') }}"></script>
+</body>
+</html>

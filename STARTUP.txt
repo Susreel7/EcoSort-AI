@@ -1,0 +1,101 @@
+TrashFormer - Application Startup Guide
+=====================================
+
+Prerequisites:
+-------------
+- Python 3.11 (Required)
+- Web browser
+- Command prompt or PowerShell
+- Dataset (waste images categorized by type)--https://github.com/nikhilvenkatkumsetty/TrashBox/tree/main/TrashBox_train_set
+
+Dataset Setup:
+-------------
+split the dataset into training and validation:
+
+python scripts/split_data.py
+
+after executing the above Command
+
+1. Creates a folder named 'waste_data' one level up from the project directory:
+   - Location: ../waste_data (relative to project folder)
+   - Structure:
+     waste_data/
+     ├── cardboard/
+     ├── glass/
+     ├── metal/
+     ├── paper/
+     ├── plastic/
+     └── trash/
+
+   Place corresponding waste images in each category folder.
+
+2. Data Preparation and Training (Optional):
+   If you need to train your own model:
+   a. Clean the dataset:
+      python scripts/clean_dataset.py
+      (This will remove corrupted images and ensure proper format)
+   
+   b. Train the model:
+      python scripts/train_trashformer.py
+      (This will create a new model in the models/ directory)
+
+Step-by-Step Instructions:
+-------------------------
+
+1. Open Command Prompt or PowerShell in the project directory
+   For example, if you downloaded to your Downloads folder:
+   cd C:\Users\<username>\Downloads\EcoSort-AI\EcoSort-AI
+
+2. Create Virtual Environment
+   python -m venv myenv
+
+3. Activate Virtual Environment
+   For Command Prompt:
+   myenv\Scripts\activate.bat
+   
+   For PowerShell:
+   myenv\Scripts\Activate.ps1
+
+4. Install Required Packages
+   pip install -r requirements.txt
+   
+5. Start the Application
+   python app.py
+
+6. Access the Application
+   Open your web browser and go to:
+   http://localhost:5000
+
+Notes:
+------
+- Make sure Python 3.11 is installed and added to your system PATH
+- Keep the terminal window open while using the application
+- To stop the application, press Ctrl+C in the terminal
+- To deactivate the virtual environment, type 'deactivate'
+
+Dataset and Training Notes:
+-------------------------
+- The default model is pre-trained and ready to use
+- If training your own model:
+  * Ensure your dataset has clear, well-lit images
+  * Each category should have at least 100 images for good results
+  * Training may take several hours depending on your hardware
+  * Monitor training progress in the terminal
+  * The best model will be automatically saved in the models/ directory
+  * Update the model path in app.py if using a custom trained model
+
+Troubleshooting:
+---------------
+1. If you see "python not found":
+   - Verify Python installation: python --version
+   - Check if Python is in your system PATH
+
+2. If packages fail to install:
+   - Verify internet connection
+   - Try: pip install --upgrade pip
+   - Install packages one by one from requirements.txt
+
+3. If the application doesn't start:
+   - Check if port 5000 is available
+   - Verify all packages are installed correctly
+   - Check Python version is 3.11
