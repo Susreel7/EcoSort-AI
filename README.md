@@ -1,4 +1,4 @@
-# EcoSort AI (TrashFormer) ♻️
+# EcoSort AI ♻️
 
 **EcoSort AI** is a smart waste classification system powered by Artificial Intelligence. It uses Deep Learning (MobileNetV2) to accurately classify different types of waste, helping users sort trash effectively for recycling and proper disposal.
 
